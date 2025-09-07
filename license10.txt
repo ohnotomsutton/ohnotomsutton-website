@@ -1,0 +1,17 @@
+Single-User Personal Use License
+v1.0
+September 7th, 2025
+
+This license is for a single user and grants you a non-exclusive, non-transferable right to use the provided content for personal, non-commercial purposes only.
+
+You may not use the content for any business or commercial purposes, including but not limited to use in websites, applications, or products that generate revenue.
+
+You may not redistribute, resell, or sublicense the content under any circumstances, even if it is for free.
+
+You may not create any derivative works or modifications based on the content.
+
+The content is provided "as-is" without any warranties.
+
+If there is an issue with the terms, send me an email. (ohnotomsutton@gmail.com)
+
+Content of this package is under copyright, Tom Sutton, 2025. All rights reserved. 
