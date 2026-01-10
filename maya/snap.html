@@ -148,10 +148,10 @@ code[class*="language-"] {
         <p><span style="color: #ccc">ohno</span>tomsutton</p>
     </header>
     <main>
-    <p>TUTORIAL: EASY SNAPPING TOOL FOR MAYA</p>
+    <p>EASY SNAPPING TOOL FOR MAYA</p>
 	<blockquote>
-	This code lets a user save an object's coordinates with a double-click of a shelf button, and then using a single click, apply those coordinates. This can snap two objects together, or let you snap an object to the same position across several frames; it can be useful for locking down feet or hands while animating, or for positioning before applying constraints. <br /><br />
-	First we need to save the position and rotation we want to snap to. Create a shelf button and in the Shelf Editor, put this code in the "Double Click Command" tab for that button.
+	This code lets a user save an object's coordinates with a double-click of a shelf button, and then using a single click, apply those coordinates. This can snap two objects together, or let you snap an object to the same position across several frames; it can be useful for locking down feet or hands while animating, or for positioning before applying constraints. Because its in simple MEL script, it should be applicable in any Maya version back to 2012.<br /><br />
+	First we need to save the position and rotation we want to snap to. Create a shelf button and in the Shelf Editor, put this MEL script in the "Double Click Command" tab for that button.
 	</blockquote>
 	<pre><code class="language-mel">
 global proc storeSnapValues() {
@@ -215,25 +215,21 @@ storeSnapValues();
 //Then we call the function to run the code.
     </code></pre>
 		
-	<blockquote>Now, when we select a different object, we need to be able to apply those values with a single click. Under the "Command" tab for our button, put this code.</blockquote>
+	<blockquote>Now, when we select a different object, we need to be able to apply those values with a single click. Under the "Command" tab for our button, put this MEL script.</blockquote>
 
 	<pre><code class="language-mel">
 global proc applySnapValues() {
-    global float $storedT[]; // Must declare as global here too!
-    global float $storedR[]; // Must declare as global here too!
-    
+    global float $storedT[];
+    global float $storedR[]; 
     string $targetObj[] = `ls -sl`; // Fixed variable name
-    
     if (size($targetObj) == 0) {
         warning("No object selected!");
         return;
     }
-    
     if (size($storedT) == 0 || size($storedR) == 0) {
         warning("No transform data stored! Double-click first to store.");
         return;
     }
-    
     string $objName = $targetObj[0]; // Using correct variable
     xform -worldSpace -translation $storedT[0] $storedT[1] $storedT[2] $objName;
     xform -worldSpace -rotation $storedR[0] $storedR[1] $storedR[2] $objName;
@@ -285,7 +281,8 @@ global proc applySnapValues() {
 // A print statement as a heads up for what we just did.
 }
 
-applySnapValues() ;
+applySnapValues();
+// Run the function!
 	</code></pre>
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
@@ -298,7 +295,6 @@ applySnapValues() ;
 <br />
 <span>Tom Sutton, 2025</span>
 </div>
-
 <br/>
 <br/>
     </footer>
