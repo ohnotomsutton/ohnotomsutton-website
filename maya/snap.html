@@ -221,7 +221,7 @@ storeSnapValues();
 global proc applySnapValues() {
     global float $storedT[];
     global float $storedR[]; 
-    string $targetObj[] = `ls -sl`; // Fixed variable name
+    string $targetObj[] = `ls -sl`;
     if (size($targetObj) == 0) {
         warning("No object selected!");
         return;
@@ -230,7 +230,7 @@ global proc applySnapValues() {
         warning("No transform data stored! Double-click first to store.");
         return;
     }
-    string $objName = $targetObj[0]; // Using correct variable
+    string $objName = $targetObj[0];
     xform -worldSpace -translation $storedT[0] $storedT[1] $storedT[2] $objName;
     xform -worldSpace -rotation $storedR[0] $storedR[1] $storedR[2] $objName;
     print("Transform applied to: " + $objName + "\n");
