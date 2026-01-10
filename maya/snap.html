@@ -137,27 +137,47 @@ main > p:last-of-type {
         <p><span style="color: #ccc">ohno</span>tomsutton</p>
     </header>
     <main>
-    <p>EASY SNAPPING TOOL FOR MAYA</p>
+    <p>TUTORIAL: EASY SNAPPING TOOL FOR MAYA</p>
+	<blockquote>First we need to save the position and rotation we want to snap to. Create a shelf button and in the shelf editor, put this code in the "Double Click Command" tab.</blockquote>
     <pre><code class="language-mel">
-//store on double click
-global proc storeGlobalTransform() {
-    global float $storedT[]; // Global variable for Translation (T)
+// We need a function (a chunk of code) we can call anytime from anywhere (like from a single click on the same button), not just in the code we have here. 
+// We can use "proc" to define a function. Calling it "global" makes it accessible from any other code we decide to run from anywhere in Maya.
+		
+global proc storeSnapValues() { //This creates the function called "storeSnapValues"
+		
+    global float $storedT[]; // Global variable for Translation (T) 
     global float $storedR[]; // Global variable for Rotation (R)
-    
-    string $sourceObj[] = `ls -sl`;
-    
+
+	// We need to store the values as "global" so they can also be referenced from anywhere. 
+	// For our purposes, just know that "float" is a type of variable, a number that has a decimal place. It is different from a "string" or an "interger" or "int", which are other data types.
+	// The next part is "$storedT" and "$storedR". Leading with "$" tells Maya that this is the name of the variable. 
+	// The "[]" at the end tells Maya there are going to be MULTIPLE values stored inside this variable. This changes it from a single float to an "array" of floats.
+
+	// We're going to have to get which object we currently have selected in order to save its Translate and Rotate values.
+		
+	string $sourceObj[] = `ls -sl`;
+	
+	// This is a value type called a "string". Strings are typically bits of text, names, or labels. You can also have an array of strings.
+	// 'ls -sl' is short for "list selection". It creates a list of everything you have selected, it runs a command that creates the list, and then returns each item in that list to be the value of each string in our array.
+
+	// If the size of the array we just made is zero, there's nothing in it. We show a little warning and then end the function with "return;". There's no need to keep running code if we don't have anything selected.
     if (size($sourceObj) == 0) {
         warning("No object selected!");
         return;
     }
-    
+
+	// To simplify the next few lines of code, we're going to save the value of the FIRST OBJECT in our list (even if its only one object, its fine).
+	// The first item is actually indexed with a 0. So we save the "0th" string in the array to single string.
+		
     string $objName = $sourceObj[0];
+	
     $storedT = `xform -query -worldSpace -translation $objName`;
     $storedR = `xform -query -worldSpace -rotation $objName`;
     print("Transform stored from: " + $objName + "\n");
 }
 
-storeGlobalTransform() ;
+storeSnapValues();
+//Then we call the function to run the code.
     </code></pre>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-mel.min.js"></script>
