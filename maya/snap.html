@@ -130,6 +130,10 @@ main > p:last-of-type {
     border: 1px solid #ccc;
   }
 
+code {
+	border-radius: 3px;
+}
+
 pre[class*="language-"],
 code[class*="language-"] {
     white-space: pre-wrap !important;
@@ -168,7 +172,7 @@ global proc storeSnapValues() {
 }
 storeGlobalTransform();
 	</code></pre>
-<blockquote>The code is broken down in the section below.</blockquote>
+<blockquote>Here's the breakdown for each line.</blockquote>
     <pre><code class="language-mel">
 // We need a function (a chunk of code) we can call anytime from anywhere (like from a single click on the same button), not just in the code we have here. 
 // We can use "proc" to define a function. Calling it "global" makes it accessible from any other code we decide to run from anywhere in Maya.
@@ -189,7 +193,7 @@ global proc storeSnapValues() { //This creates the function called "storeSnapVal
 	
 	// This is a value type called a "string". Strings are typically bits of text, names, or labels. You can also have an array of strings.
 	// The backticks (`) run the command inside and take the returned value and assign it to our string or variable.
-	// 'ls -sl' is short for "list selection". It creates a list of everything you have selected, it runs a command that creates the list, and then returns each item in that list to be the value of each string in our array.
+	// 'ls -sl' is short for "list selection". It creates a list of everything you have selected, and then returns each item in that list to be the value of each string in our array.
 
 	// If the size of the array we just made is zero, there's nothing in it. We show a little warning and then end the function with "return;". There's no need to keep running code if we don't have anything selected.
     if (size($sourceObj) == 0) {
@@ -204,7 +208,7 @@ global proc storeSnapValues() { //This creates the function called "storeSnapVal
 	// The float arrays we made before now need to get their values from the saved object.
     $storedT = `xform -query -worldSpace -translation $objName`;
     $storedR = `xform -query -worldSpace -rotation $objName`;
-	// Here we see an "xform" command, paired with the tags "-query -worldSpace -translation". It "queries" or asks maya the transform (shortened to xform) the objects worldSpace translation or rotation. The values are then saved to our array of strings for each.
+	// Here we see an "xform" command, paired with the tags "-query -worldSpace -translation". It "queries" or asks maya the transform (shortened to xform) the objects worldSpace translation or rotation. The values are then saved to our array of floats in X-Y-Z order.
 	
     print("Transform stored from: " + $objName + "\n");
 	// A print command just gives us a little heads up as to what we actually just did.
@@ -215,6 +219,7 @@ storeSnapValues();
     </code></pre>
 		
 	<blockquote>Now, when we select a different object, we need to be able to apply those values with a single click. Under the "Command" tab for our button, put this code.</blockquote>
+
 	<pre><code class="language-mel">
 global proc applySnapValues() {
     global float $storedT[]; // Must declare as global here too!
@@ -239,11 +244,53 @@ global proc applySnapValues() {
 }
 
 applySnapValues() ;
-	</code></pre>
+</code></pre>
 
-	<blockquote>The code is broken down in the section below.</blockquote>
-	
+<blockquote>Here's the breakdown for each line of code.</blockquote>
 		
+	<pre><code class="language-mel">
+// We're going to create another global function to apply our saved values. We'll call it "applySnapValues"
+global proc applySnapValues() {
+		
+    global float $storedT[]; 
+    global float $storedR[];
+// We do have to declare these again. If they have the exact same name, Maya will know that they are the same variables as before.
+		
+    string $targetObj[] = `ls -sl`; 
+
+// Let's get a list of all the objects we have selected (even if its just one object) and save it to an array of strings.
+
+// Again if we don't have anything selected, we don't have to run any code, and we can return.
+		
+    if (size($targetObj) == 0) {
+        warning("No object selected!");
+        return;
+    }
+
+// What if we run the apply command, but no data is stored? We'll check and see if our global float values are empty. If they are, then we won't run any more code.
+		
+    if (size($storedT) == 0 || size($storedR) == 0) {
+        warning("No transform data stored! Double-click first to store.");
+        return;
+    }
+
+// Let's assign the first object in our selection list to a single string, just like before.
+    string $objName = $targetObj[0]; 
+
+// Instead of running the "xform" command inside backticks, we're just going to run it to APPLY transform values. Note that we're not using the "-query" tag this time.
+		
+    xform -worldSpace -translation $storedT[0] $storedT[1] $storedT[2] $objName;
+    xform -worldSpace -rotation $storedR[0] $storedR[1] $storedR[2] $objName;
+
+// For the translation and rotation, we apply the worldSpace X,Y,Z values (in order). This should move the object. If you have auto-key on, they object is also keyed in its new position.
+		
+    print("Transform applied to: " + $objName + "\n");
+// A print statement as a heads up for what we just did.
+}
+
+applySnapValues() ;
+	</code></pre>
+	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-mel.min.js"></script>
 	</main>
