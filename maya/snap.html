@@ -148,7 +148,10 @@ code[class*="language-"] {
     </header>
     <main>
     <p>TUTORIAL: EASY SNAPPING TOOL FOR MAYA</p>
-	<blockquote>This code lets a user save an object's coordinates with a double-click of a shelf button, and then using a single click, apply those coordinates. This can snap two objects together, or let you snap an object to the same position across several frames; it can be useful for locking down feet or hands while animating. First we need to save the position and rotation we want to snap to. Create a shelf button and in the shelf editor, put this code in the "Double Click Command" tab for that button.</blockquote>
+	<blockquote>
+	This code lets a user save an object's coordinates with a double-click of a shelf button, and then using a single click, apply those coordinates. This can snap two objects together, or let you snap an object to the same position across several frames; it can be useful for locking down feet or hands while animating, or for positioning before applying constraints. <br />
+	First we need to save the position and rotation we want to snap to. Create a shelf button and in the Shelf Editor, put this code in the "Double Click Command" tab for that button.
+	</blockquote>
 	<pre><code class="language-mel">
 global proc storeSnapValues() {
     global float $storedT[]; 
@@ -185,6 +188,7 @@ global proc storeSnapValues() { //This creates the function called "storeSnapVal
 	string $sourceObj[] = `ls -sl`;
 	
 	// This is a value type called a "string". Strings are typically bits of text, names, or labels. You can also have an array of strings.
+	// The backticks (`) run the command inside and take the returned value and assign it to our string or variable.
 	// 'ls -sl' is short for "list selection". It creates a list of everything you have selected, it runs a command that creates the list, and then returns each item in that list to be the value of each string in our array.
 
 	// If the size of the array we just made is zero, there's nothing in it. We show a little warning and then end the function with "return;". There's no need to keep running code if we don't have anything selected.
@@ -194,20 +198,23 @@ global proc storeSnapValues() { //This creates the function called "storeSnapVal
     }
 
 	// To simplify the next few lines of code, we're going to save the value of the FIRST OBJECT in our list (even if its only one object, its fine).
-	// The first item is actually indexed with a 0. So we save the "0th" string in the array to single string.
-		
+	// The first item is actually indexed with a 0. So we save the "0th" string in the array to a single string.
     string $objName = $sourceObj[0];
-	
+
+	// The float arrays we made before now need to get their values from the saved object.
     $storedT = `xform -query -worldSpace -translation $objName`;
     $storedR = `xform -query -worldSpace -rotation $objName`;
+	// Here we see an "xform" command, paired with the tags "-query -worldSpace -translation". It "queries" or asks maya the transform (shortened to xform) the objects worldSpace translation or rotation. The values are then saved to our array of strings for each.
+	
     print("Transform stored from: " + $objName + "\n");
+	// A print command just gives us a little heads up as to what we actually just did.
 }
 
 storeSnapValues();
 //Then we call the function to run the code.
     </code></pre>
 		
-	<blockquote>Now, when we select a different object, we need to be able to apply those values with a single click.</blockquote>
+	<blockquote>Now, when we select a different object, we need to be able to apply those values with a single click. Under the "Command" tab for our button, put this code.</blockquote>
 	<pre><code class="language-mel">
 global proc applySnapValues() {
     global float $storedT[]; // Must declare as global here too!
@@ -233,6 +240,10 @@ global proc applySnapValues() {
 
 applySnapValues() ;
 	</code></pre>
+
+	<blockquote>The code is broken down in the section below.</blockquote>
+	
+		
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-mel.min.js"></script>
 	</main>
