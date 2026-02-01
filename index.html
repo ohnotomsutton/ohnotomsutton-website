@@ -296,6 +296,11 @@ video {
   <source src="/files/trackerreel.mp4" type="video/mp4">
   If you don't see demo reels here, your browser does not support embedded video.
 </video>
+<br />
+<video id="player2" controls poster="/img/mpups_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+  <source src="/files/mpupsreel.mp4" type="video/mp4">
+  If you don't see demo reels here, your browser does not support embedded video.
+</video>
 	
 <script>
   var video1 = document.getElementById('player1');
@@ -310,6 +315,14 @@ video {
       video2.load(); // Resets the video
   };
   const player2 = new Plyr('#player2', {
+      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
+  });
+
+	 var video3 = document.getElementById('player3');
+  video3.onended = function() {
+      video3.load(); // Resets the video
+  };
+  const player3 = new Plyr('#player3', {
       controls: ['play', 'progress', 'mute','volume', 'fullscreen']
   });
 </script>
