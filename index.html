@@ -287,22 +287,29 @@ video {
 <p>ANIMATION</p>
 <div>
 
-<video id="player" controls poster="/img/thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+<video id="player1" controls poster="/img/thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
   <source src="/files/spiderversereel.mp4" type="video/mp4">
   If you don't see a demo reel, your browser does not support embedded video.
 </video>
 	
-<video id="player" controls poster="/img/tracker_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+<video id="player2" controls poster="/img/tracker_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
   <source src="/files/spiderversereel.mp4" type="video/mp4">
   If you don't see a demo reel, your browser does not support embedded video.
 </video>
 	
 <script>
-  var video = document.getElementById('player');
-  video.onended = function() {
-      video.load(); // Resets the video
+  var video1 = document.getElementById('player1');
+  video1.onended = function() {
+      video1.load(); // Resets the video
   };
-  const player = new Plyr('#player', {
+  const player1 = new Plyr('#player1', {
+      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
+  });
+	  var video2 = document.getElementById('player2');
+  video2.onended = function() {
+      video2.load(); // Resets the video
+  };
+  const player2 = new Plyr('#player2', {
       controls: ['play', 'progress', 'mute','volume', 'fullscreen']
   });
 </script>
