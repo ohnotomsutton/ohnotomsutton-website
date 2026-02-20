@@ -52,6 +52,7 @@
       padding: 4px 10px;
       cursor: pointer;
       border-radius: 5px;
+      border: none;
       font-variant: small-caps;
     }
 
@@ -116,6 +117,7 @@
             activeTag = tag;
             render(entries.filter(e => e.tags.includes(tag)));
             document.querySelectorAll('#tags button').forEach(b => b.classList.remove('active'));
+            btn.style.backgroundColor = generatePastelColorRgb();
             btn.classList.add('active');
           };
           tagContainer.appendChild(btn);
@@ -136,8 +138,18 @@
           <div class="entry-tags">${entry.tags.join(', ')}</div>
         `;
         container.appendChild(div);
+        document.getElementById('colorBox').style.backgroundColor = generatePastelColorRgb();
       });
     }
+
+  function generatePastelColorRgb() {
+    const min = 150; // Minimum value for R, G, and B
+    const max = 255; // Maximum value for R, G, and B
+    const r = Math.floor(Math.random() * (max - min + 1)) + min;
+    const g = Math.floor(Math.random() * (max - min + 1)) + min;
+    const b = Math.floor(Math.random() * (max - min + 1)) + min;
+    return `rgb(${r}, ${g}, ${b})`;
+  }
   </script>
 </body>
 </html>
