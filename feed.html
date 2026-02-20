@@ -113,11 +113,11 @@
         allTags.forEach(tag => {
           const btn = document.createElement('button');
           btn.textContent = tag;
+          btn.style.backgroundColor = generatePastelColorRgb();
           btn.onclick = () => {
             activeTag = tag;
             render(entries.filter(e => e.tags.includes(tag)));
             document.querySelectorAll('#tags button').forEach(b => b.classList.remove('active'));
-            btn.style.backgroundColor = generatePastelColorRgb();
             btn.classList.add('active');
           };
           tagContainer.appendChild(btn);
