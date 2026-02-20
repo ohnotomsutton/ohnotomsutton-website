@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    #tags {
+      margin-bottom: 20px;
+    }
+
+    button {
+      margin: 4px;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+
+    button.active {
+      background: black;
+      color: white;
+    }
+
+    .entry {
+      margin-bottom: 16px;
+    }
+
+    .entry-tags {
+      font-size: 0.85em;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Feed</h1>
+  <div id="tags"></div>
+  <div id="entries"></div>
+
+  <script>
+    let activeTag = null;
+
+    fetch('entries.json')
+      .then(res => res.json())
+      .then(entries => {
+        const allTags = [...new Set(entries.flatMap(e => e.tags))];
+
+        const tagContainer = document.getElementById('tags');
+
+        const allBtn = document.createElement('button');
+        allBtn.textContent = 'all';
+        allBtn.classList.add('active');
+        allBtn.onclick = () => {
+          activeTag = null;
+          render(entries);
+          document.querySelectorAll('#tags button').forEach(b => b.classList.remove('active'));
+          allBtn.classList.add('active');
+        };
+        tagContainer.appendChild(allBtn);
+
+        allTags.forEach(tag => {
+          const btn = document.createElement('button');
+          btn.textContent = tag;
+          btn.onclick = () => {
+            activeTag = tag;
+            render(entries.filter(e => e.tags.includes(tag)));
+            document.querySelectorAll('#tags button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+          };
+          tagContainer.appendChild(btn);
+        });
+
+        render(entries);
+      });
+
+    function render(entries) {
+      const container = document.getElementById('entries');
+      container.innerHTML = '';
+      entries.forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'entry';
+        div.innerHTML = `
+          <a href="${entry.url}" target="_blank">${entry.title}</a>
+          <div class="entry-tags">${entry.tags.join(', ')}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
