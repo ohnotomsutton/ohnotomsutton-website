@@ -86,9 +86,6 @@
   <h1>MEDIA FEED</h1>
   <div id="tags"></div>
   <div id="entries"></div>
-
-</container>
-
   <script>
     let activeTag = null;
 
@@ -138,7 +135,6 @@
           <div class="entry-tags">${entry.tags.join(', ')}</div>
         `;
         container.appendChild(div);
-        document.getElementById('colorBox').style.backgroundColor = generatePastelColorRgb();
       });
     }
 
@@ -151,5 +147,6 @@
     return `rgb(${r}, ${g}, ${b})`;
   }
   </script>
+</container>
 </body>
 </html>
