@@ -442,6 +442,47 @@ body {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+.tab-drag {
+  position: relative;
+  color: transparent;
+  cursor: ew-resize;
+  font-size: 10px;
+  padding: 0 2px;
+  left: -3px;
+  flex-shrink: 0;
+  user-select: none;
+  transition: color 0.1s;
+}
+.tab:hover .tab-drag { color: var(--border); }
+
+#ctx-menu {
+  position: fixed;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: none;
+  flex-direction: column;
+  z-index: 400;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  min-width: 140px;
+}
+#ctx-menu.open { display: flex; }
+.ctx-item {
+  background: none;
+  border: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text);
+  padding: 8px 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.ctx-item:hover { background: var(--border); }
+.ctx-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 2px 0;
+}
 
 </style>
 </head>
@@ -503,7 +544,17 @@ body {
 </div>
 
 <div id="toast"></div>
-
+<div id="ctx-menu">
+  <button class="ctx-item" id="ctx-undo">Undo</button>
+  <button class="ctx-item" id="ctx-redo">Redo</button>
+  <div class="ctx-sep"></div>
+  <button class="ctx-item" id="ctx-cut">Cut</button>
+  <button class="ctx-item" id="ctx-copy">Copy</button>
+  <button class="ctx-item" id="ctx-paste">Paste</button>
+  <button class="ctx-item" id="ctx-delete">Delete</button>
+  <div class="ctx-sep"></div>
+  <button class="ctx-item" id="ctx-selectall">Select All</button>
+</div>
 <script>
 const $ = id => document.getElementById(id);
 const tabBar = $('tab-bar'), edArea = $('editor-area'), statEl = $('stat-info');
@@ -513,6 +564,7 @@ const SK = 'np4';
 const DEFAULTS = {bg:'#f5f4f0',border:'#d0cec8',text:'#1a1917',muted:'#999590'};
 const sty = {font:"'IBM Plex Mono',monospace", size:13, ...DEFAULTS};
 const CK = ['bg','text','border','muted'];
+
 
 function applyStyle() {
   const r = document.documentElement.style;
@@ -553,24 +605,56 @@ function createTab(name, content='') {
 function renderTab(t) {
   const el = document.createElement('div');
   el.className = 'tab'; el.dataset.id = t.id;
+
   const inp = document.createElement('input');
   inp.className = 'tab-name-input'; inp.value = t.name; inp.maxLength = 40; inp.readOnly = true;
   inp.addEventListener('dblclick', () => { inp.readOnly = false; inp.select(); });
   inp.addEventListener('blur', () => { inp.readOnly = true; t.name = inp.value.trim()||'untitled'; inp.value = t.name; schedSave(); });
   inp.addEventListener('keydown', e => { if (e.key==='Enter') inp.blur(); e.stopPropagation(); });
   inp.addEventListener('mousedown', e => { if (inp.readOnly) e.preventDefault(); });
+
+  const drag = document.createElement('span');
+  drag.className = 'tab-drag';
+  drag.textContent = '⠿';
+  drag.addEventListener('mousedown', () => { el.draggable = true; });
+  document.addEventListener('mouseup', () => { el.draggable = false; });
+
+  el.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', t.id);
+    setTimeout(() => el.classList.add('dragging'), 0);
+  });
+  el.addEventListener('dragover', e => {
+    e.preventDefault();
+    const dragging = document.querySelector('.tab.dragging');
+    if (!dragging || dragging === el) return;
+    const rect = el.getBoundingClientRect();
+    if (e.clientX < rect.left + rect.width / 2) {
+      tabBar.insertBefore(dragging, el);
+    } else {
+      tabBar.insertBefore(dragging, el.nextSibling);
+    }
+  });
+  el.addEventListener('dragend', () => {
+    el.classList.remove('dragging');
+    el.draggable = false;
+    const order = [...document.querySelectorAll('.tab')].map(el => el.dataset.id);
+    tabs.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+    schedSave();
+  });
+
   const x = document.createElement('button');
   x.className = 'tab-close'; x.textContent = '×';
   x.addEventListener('click', e => { e.stopPropagation(); closeTab(t.id); });
-  el.appendChild(inp); el.appendChild(x);
-  el.addEventListener('mousedown', e => { if (e.target===x || !inp.readOnly) return; activateTab(t.id); });
+
+  el.appendChild(drag); el.appendChild(inp); el.appendChild(x);
+  el.addEventListener('mousedown', e => { if (e.target===x || e.target===drag || !inp.readOnly) return; activateTab(t.id); });
   tabBar.insertBefore(el, $('add-tab'));
   setTimeout(() => el.scrollIntoView({inline:'nearest',block:'nearest'}), 0);
 }
 
 function renderEditor(t) {
   const ed = document.createElement('textarea');
-  ed.className = 'editor'; ed.dataset.id = t.id; ed.value = t.content; ed.spellcheck = true;
+  ed.className = 'editor'; ed.dataset.id = t.id; ed.value = t.content; ed.spellcheck = false;
   ed.addEventListener('input', () => { t.content = ed.value; schedSave(); updateStat(ed.value); });
   ed.addEventListener('keydown', e => {
     if (e.key!=='Tab') return; e.preventDefault();
@@ -675,8 +759,50 @@ $('menu-save').addEventListener('click', async () => {
     showToast('saved to disk');
   } catch(e) { if (e.name !== 'AbortError') console.error(e); }
 });
+
+const ctxMenu = $('ctx-menu');
+
+document.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  // keep menu inside viewport
+  const x = Math.min(e.clientX, window.innerWidth - 160);
+  const y = Math.min(e.clientY, window.innerHeight - ctxMenu.offsetHeight - 10);
+  ctxMenu.style.left = x + 'px';
+  ctxMenu.style.top = y + 'px';
+  ctxMenu.classList.add('open');
+});
+
+document.addEventListener('click', () => ctxMenu.classList.remove('open'));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') ctxMenu.classList.remove('open'); });
+ctxMenu.addEventListener('click', e => e.stopPropagation());
+
+function execCmd(cmd) {
+  ctxMenu.classList.remove('open');
+  const ed = getEd(activeId);
+  if (ed) ed.focus();
+  document.execCommand(cmd);
+}
+
+$('ctx-undo').addEventListener('click', () => execCmd('undo'));
+$('ctx-redo').addEventListener('click', () => execCmd('redo'));
+$('ctx-cut').addEventListener('click', () => execCmd('cut'));
+$('ctx-copy').addEventListener('click', () => execCmd('copy'));
+$('ctx-paste').addEventListener('click', async () => {
+  ctxMenu.classList.remove('open');
+  const ed = getEd(activeId); if (!ed) return;
+  ed.focus();
+  try {
+    const text = await navigator.clipboard.readText();
+    const s = ed.selectionStart;
+    ed.value = ed.value.slice(0, s) + text + ed.value.slice(ed.selectionEnd);
+    ed.selectionStart = ed.selectionEnd = s + text.length;
+    ed.dispatchEvent(new Event('input'));
+  } catch(e) { document.execCommand('paste'); }
+});
+$('ctx-delete').addEventListener('click', () => execCmd('delete'));
+$('ctx-selectall').addEventListener('click', () => execCmd('selectAll'));
+
 </script>
+
 </body>
 </html>
-
-
