@@ -1,680 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f5f4f0">
-<meta name="background-color" content="#f5f4f0">
-<title>nopepad</title>
-<link rel="manifest" href="manifest.json">
-<script>
-  if ('serviceWorker' in navigator)
-    navigator.serviceWorker.register('/nopepad/sw.js', {scope: '/nopepad/'});
-</script>
-<style>
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Fira+Code:wght@400;500&family=Inconsolata:wght@400;500&family=Source+Code+Pro:wght@400;500&family=Courier+Prime:wght@400;700&display=swap");
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-:root {
-  --bg: #f5f4f0;
-  --border: #d0cec8;
-  --text: #1a1917;
-  --muted: #999590;
-  --font: "IBM Plex Mono", monospace;
-  --sz: 13.5px;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ohnotomsutton</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+	<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <style>
 body {
-  font-family: "IBM Plex Mono", monospace;
-  background: var(--bg);
-  color: var(--text);
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  font-size: 12px;
+    font-family: monospace;
+    margin: 10px; 
+    padding: 0;
+    line-height: 1.3; 
+    color: #000; 
+    background-color: #fff;
 }
 
-#tab-bar {
-  height: 32px;
-  display: flex;
-  align-items: flex-end;
-  padding: 0 4px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  background: var(--bg);
-}
-#tab-bar::-webkit-scrollbar {
-  height:4px;
-}
-#tab-bar::-webkit-scrollbar-thumb{background:var(--muted);}
-#tab-bar::-webkit-scrollbar-track{background:var(--border);}
-
-
-.tab {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px 3px 10px;
-  border: 1px solid transparent;
-  border-bottom: none;
-  border-radius: 3px 3px 0 0;
-  font-size: 11px;
-  color: var(--muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-  cursor: pointer;
-  position: relative;
-  bottom: -1px;
-}
-.tab:hover {
-  color: var(--text);
-}
-.tab.active {
-  background: var(--bg);
-  border-color: var(--border);
-  color: var(--text);
-}
-.tab-name-input {
-  background: none;
-  border: none;
-  outline: none;
-  font: inherit;
-  color: inherit;
-  width: 80px;
-  cursor: default;
-  padding: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.tab-name-input:not([readonly]) {
-  cursor: text;
-}
-.tab-close {
-  border: none;
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 1;
-  padding: 0;
-  flex-shrink: 0;
-  opacity: 0;
-  transition: opacity 0.1s;
-}
-.tab:hover .tab-close,
-.tab.active .tab-close {
-  opacity: 0.5;
-}
-.tab-close:hover {
-  opacity: 1 !important;
-}
-#add-tab {
-  border: none;
-  background: none;
-  color: var(--muted);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0 7px 2px;
-  flex-shrink: 0;
-  position: relative;
-  bottom: -1px;
-}
-#add-tab:hover {
-  color: var(--text);
+container {
+    display: block;
+    max-width: 640px; 
+    margin: 10px auto; 
+    padding: 0; 
 }
 
-#editor-area {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-  padding-bottom: 28px;
-}
-.editor {
-  width: 100%;
-  height: 100%;
-  background: var(--bg);
-  border: none;
-  outline: none;
-  padding: 16px 18px 16px;
-  font-family: var(--font);
-  font-size: var(--sz);
-  line-height: 1.65;
-  color: var(--text);
-  resize: none;
-  display: none;
-  tab-size: 4;
-}
-.editor.active {
-  display: block;
-}
-.editor::selection {
-  background: var(--muted);
-  color: var(--bg);
+header {
+    margin-bottom: 1rem;
+	font-family: 'Fuzzy Bubbles';
 }
 
-#statusbar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  border-top: 1px solid var(--border);
-  background: var(--bg);
-  user-select: none;
-}
-#stat-info {
-  flex: 1;
-  padding: 0 10px;
-  font-size: 10px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-#save-indicator {
-  font-size: 10px;
-  color: var(--muted);
-  padding: 0 4px 0 0;
-  flex-shrink: 0;
-}
-.bar-sep {
-  width: 1px;
-  height: 13px;
-  background: var(--border);
-  flex-shrink: 0;
-}
-.bar-btn {
-  border: none;
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: 14px;
-  padding: 0 8px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.1s;
-  flex-shrink: 0;
-}
-.bar-btn:hover {
-  color: var(--text);
+header p {
+    font-size: 2rem;
+    font-weight: normal; 
+    margin: 0;
 }
 
-#menu-wrap {
-  position: relative;
-  flex-shrink: 0;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-#menu-popup {
-  position: absolute;
-  bottom: 28px;
-  right: 0;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 4px 4px 0 4px;
-  min-width: 140px;
-  display: none;
-  flex-direction: column;
-  z-index: 100;
-  box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.1);
-}
-#menu-popup.open {
-  display: flex;
-}
-.menu-item {
-  background: none;
-  border: none;
-  border-bottom: 1px solid var(--border);
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  color: var(--text);
-  padding: 9px 13px;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.menu-item:last-child {
-  border-bottom: none;
-}
-.menu-item:hover:not(.disabled) {
-  background: var(--border);
-}
-.menu-item.disabled {
-  opacity: 0.35;
-  cursor: default;
-  pointer-events: none;
+main p {
+    margin: 0.75rem 0;
+    font-size: 1rem;
 }
 
-#modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.2);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-}
-#modal-overlay.open {
-  display: flex;
-}
-#modal {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  width: 340px;
-  max-width: 95vw;
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
-}
-#modal h2 {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--muted);
-  margin-bottom: 18px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.srow {
-  margin-bottom: 16px;
-}
-.srow > label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--muted);
-  margin-bottom: 7px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.font-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5px;
-}
-.font-btn {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 7px 9px;
-  cursor: pointer;
-  text-align: left;
-}
-.font-btn .fs {
-  display: block;
-  font-size: 14px;
-  color: var(--text);
-  margin-bottom: 2px;
-}
-.font-btn .fl {
-  display: block;
-  font-size: 10px;
-  color: var(--muted);
-  font-family: "IBM Plex Mono", monospace;
-}
-.font-btn.selected {
-  border-color: var(--text);
-}
-.font-btn:hover {
-  background: var(--border);
-}
-.size-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.size-row input[type="range"] {
-  flex: 1;
-  accent-color: var(--text);
-}
-.size-row span {
-  font-size: 11px;
-  color: var(--muted);
-  width: 30px;
-  text-align: right;
-}
-.color-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.color-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.clabel {
-  font-size: 10px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  width: 44px;
-  flex-shrink: 0;
-}
-.color-row input[type="color"] {
-  width: 28px;
-  height: 20px;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 1px 2px;
-  background: none;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.color-row input[type="text"] {
-  width: 72px;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 2px 5px;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  color: var(--text);
-  outline: none;
-}
-.color-row input[type="text"]:focus {
-  border-color: var(--text);
-}
-.reset-btn {
-  background: none;
-  border: none;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
-  color: var(--muted);
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  padding: 0;
-}
-.reset-btn:hover {
-  color: var(--text);
-}
-.modal-footer {
-  margin-top: 18px;
-  display: flex;
-  justify-content: flex-end;
-}
-.modal-close {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 5px 18px;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  color: var(--text);
-  cursor: pointer;
-}
-.modal-close:hover {
-  background: var(--border);
+main > br {
+    display: none; 
 }
 
-#toast {
-  position: fixed;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%) translateY(5px);
-  background: var(--text);
-  color: var(--bg);
-  font-size: 11px;
-  padding: 5px 12px;
-  border-radius: 3px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s, transform 0.15s;
-  z-index: 300;
-}
-#toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+main > p 
+{
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
-</style>
+.table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.7rem; 
+}
+
+thead {
+    border-bottom: 1px solid #000; 
+}
+
+th, td {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+th {
+    font-weight: normal;
+}
+
+tbody tr:first-child td {
+    border-top: none
+}
+
+a {
+    color: #0000ff;
+    text-decoration: underline;
+}
+
+a:hover {
+    
+}
+
+footer {
+    text-align: left;
+    border-top: none; 
+}
+
+footer a {
+    font-weight: normal;
+    color: #0000ff;
+}
+
+main > p:last-of-type { 
+    text-align: left; 
+    font-style: normal; 
+    color: #333;
+    margin-top: 1.5rem;
+}
+
+#table02 a {
+    color: #0000ff; 
+}
+
+.image-gallery {
+    display: flex; 
+	margin: auto;
+    flex-wrap: wrap;
+    gap: 10px; 
+    margin-bottom: 1.5rem;
+}
+
+.image-gallery img {
+    width: 150px;
+    height: 150px; 
+    border: 1px solid #ccc;
+  }
+
+video {
+	max-width: 100%;
+}
+		
+.plyr {	
+	border-radius: 5px !important;
+}
+    </style>
 </head>
 <body>
-
-<div id="tab-bar"><button id="add-tab" title="New tab">+</button></div>
-
-<div id="editor-area">
-
-  <div id="statusbar">
-    <span id="stat-info">0 chars · 0 words · 1 line</span>
-    <span id="save-indicator"></span>
-    <div class="bar-sep"></div>
-    <button class="bar-btn" id="btn-clear" title="Doubleclick to Clear" style="font-size:1.2em">✘</button>
-    <div class="bar-sep"></div>
-    <button class="bar-btn" id="btn-copy" title="Copy all">⧉</button>
-    <div class="bar-sep"></div>
-    <div id="menu-wrap">
-      <button class="bar-btn" id="btn-menu" title="Menu">☰</button>
-      <div id="menu-popup">
-        <button class="menu-item" id="menu-style">✦&nbsp; Style</button>
-        <button class="menu-item" id="menu-open"><span style="font-size:1.2em">🗁</span>&nbsp; Open file…</button>
-        <button class="menu-item" id="menu-save"><span style="font-size:1.5em">🖫</span>&nbsp; Save file…</button>
-      </div>
-    </div>
+    <container>
+    <header>
+        <p><span style="color: #ccc">ohno</span>tomsutton</p>
+    </header>
+    <main>
+        <blockquote>i'm an animation lead at guru studio on the paw patrol tv series. i also make video games, board games, art, and software - i just wanna make fun things that make people happy. contact me at ohnotomsutton ȧt gmail dȯt com.</blockquote>
+        <br />
+        <p>CV</p>
+        <div id="table01" class="table-wrapper">
+          <div class="table-inner">
+            <table>
+              <thead>
+                <tr>
+                  <th>YEAR</th>
+                  <th>TITLE</th>
+                  <th>ROLE</th>
+                  <th>STUDIO</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2025</td>
+                  <td>Paw Patrol Specials</td>
+                  <td>Animation Lead/Supervisor</td>
+                  <td>Guru Studio</td>
+                </tr>
+                <tr>
+                  <td>2024</td>
+                  <td>Paw Patrol S11 / Paw Patrol Specials</td>
+                  <td>Animation Lead</td>
+                  <td>Guru Studio</td>
+                </tr>
+                <tr>
+                  <td>2023</td>
+                  <td>Paw Patrol S10</td>
+                  <td>Animation Lead</td>
+                  <td>Guru Studio</td>
+                </tr>
+                <tr>
+                  <td>2022</td>
+                  <td>
+                    <em>Spider-Man: Across the Spider-Verse</em>
+                  </td>
+                  <td>Animator</td>
+                  <td>Sony Pictures Imageworks</td>
+                </tr>
+                <tr>
+                  <td>2021</td>
+                  <td>Paw Patrol S9</td>
+                  <td>Senior/Lead Animator</td>
+                  <td>Guru Studio</td>
+                </tr>
+                <tr>
+                  <td>2020</td>
+                  <td>Paw Patrol S8</td>
+                  <td>Senior/Lead Animator</td>
+                  <td>Guru Studio</td>
+                </tr>
+                <tr>
+                  <td>2019</td>
+                  <td>
+                    <em>The Mitchells VS The Machines</em>
+                  </td>
+                  <td>Animator</td>
+                  <td>Sony Pictures Imageworks</td>
+                </tr>
+                <tr>
+                  <td>2018</td>
+                  <td>Paw Patrol S6</td>
+                  <td>Lead Animator</td>
+                  <td>Guru Studio</td>
+                </tr>
+                <tr>
+                  <td>2018</td>
+                  <td>
+                    <em>Hotel Transylvania 3</em>
+                  </td>
+                  <td>Animator</td>
+                  <td>Sony Pictures Imageworks</td>
+                </tr>
+                <tr>
+                  <td>2017</td>
+                  <td>Paw Patrol S5 / Paw Patrol: Mighty Pups</td>
+                  <td>Animator</td>
+                  <td>Guru Studio</td>
+                </tr>
+                <tr>
+                  <td>2016</td>
+                  <td>Paw Patrol S4</td>
+                  <td>Animator</td>
+                  <td>Guru Studio</td>
+                </tr>
+                <tr>
+                  <td>2015</td>
+                  <td>Paw Patrol S3</td>
+                  <td>Jr Animator</td>
+                  <td>Guru Studio</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+<br />
+        <p>PROJECTS</p>
+        <div id="table02" class="table-wrapper">
+  <div class="table-inner">
+    <table>
+      <thead>
+        <tr>
+          <th>YEAR</th>
+          <th>TITLE</th>
+          <th>PLATFORM</th>
+          <th>GENRE</th>
+          <th>PUBLISHER</th>
+        </tr>
+      </thead>
+      <tbody>
+       <tr>
+          <td>TBD</td>
+          <td>Tomb of Gara (WIP)</td>
+          <td>Game Boy*</td>
+          <td>Action RPG</td>
+          <td>Self</td>
+        </tr>
+		<tr>
+          <td>2026</td>
+          <td><a href="https://ohnotomsutton.com/nopepad/nopepad.html">nopepad</a></td>
+          <td>Chrome PWA</td>
+          <td>notepad app</td>
+          <td>Self</td>
+        </tr>
+        <tr>
+          <td>2022</td>
+          <td><a href="https://ohnotomsutton.itch.io/fydos-magic-tiles">Fydo's Magic Tiles</td>
+          <td>Game Boy*</td>
+          <td>Action Matching Puzzle</td>
+          <td>Self</td>
+        </tr>
+        <tr>
+          <td>2019</td>
+          <td><a href="https://boardgamegeek.com/boardgame/329775/mackinaw">Mackinaw</a></td>
+          <td>Board Game</td>
+          <td>2-Player Abstract</td>
+          <td>Self</td>
+        </tr>
+      </tbody>
+    </table>
+<span style="font-size: 10px;">* Game Boy compatible</span>
   </div>
-  
 </div>
+<p>ANIMATION</p>
+<div>
 
-<div id="modal-overlay">
-  <div id="modal">
-    <h2>Style</h2>
-    <div class="srow">
-      <label>Font</label>
-      <div class="font-grid" id="font-grid">
-        <button class="font-btn selected" data-font="'IBM Plex Mono',monospace"><span class="fs" style="font-family:'IBM Plex Mono',monospace">Aa 01</span><span class="fl">IBM Plex Mono</span></button>
-        <button class="font-btn" data-font="'JetBrains Mono',monospace"><span class="fs" style="font-family:'JetBrains Mono',monospace">Aa 01</span><span class="fl">JetBrains Mono</span></button>
-        <button class="font-btn" data-font="'Fira Code',monospace"><span class="fs" style="font-family:'Fira Code',monospace">Aa 01</span><span class="fl">Fira Code</span></button>
-        <button class="font-btn" data-font="'Inconsolata',monospace"><span class="fs" style="font-family:'Inconsolata',monospace">Aa 01</span><span class="fl">Inconsolata</span></button>
-        <button class="font-btn" data-font="'Source Code Pro',monospace"><span class="fs" style="font-family:'Source Code Pro',monospace">Aa 01</span><span class="fl">Source Code Pro</span></button>
-        <button class="font-btn" data-font="'Courier Prime',monospace"><span class="fs" style="font-family:'Courier Prime',monospace">Aa 01</span><span class="fl">Courier Prime</span></button>
-      </div>
-    </div>
-    <div class="srow">
-      <label>Size</label>
-      <div class="size-row"><input type="range" id="sz-slider" min="11" max="22" step="1" value="13"><span id="sz-label">13px</span></div>
-    </div>
-    <div class="srow">
-      <label>Colors <button class="reset-btn" id="colors-reset">reset</button></label>
-      <div class="color-rows">
-        <div class="color-row"><span class="clabel">BG</span>    <input type="color" id="cp-bg">    <input type="text" id="ct-bg"     maxlength="7" spellcheck="false"></div>
-        <div class="color-row"><span class="clabel">Text</span>  <input type="color" id="cp-text">  <input type="text" id="ct-text"   maxlength="7" spellcheck="false"></div>
-        <div class="color-row"><span class="clabel">Border</span><input type="color" id="cp-border"><input type="text" id="ct-border" maxlength="7" spellcheck="false"></div>
-        <div class="color-row"><span class="clabel">Muted</span> <input type="color" id="cp-muted"> <input type="text" id="ct-muted"  maxlength="7" spellcheck="false"></div>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="modal-close" id="modal-close-btn">done</button></div>
-  </div>
-</div>
-
-<div id="toast"></div>
-
+<video id="player1" controls poster="/img/thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+  <source src="/files/spiderversereel.mp4" type="video/mp4">
+  If you don't see demo reels here, your browser does not support embedded video.
+</video>
+<br />
+<video id="player2" controls poster="/img/tracker_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+  <source src="/files/trackerreel.mp4" type="video/mp4">
+  If you don't see demo reels here, your browser does not support embedded video.
+</video>
+<br />
+<video id="player3" controls poster="/img/mpups_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+  <source src="/files/mpupsreel.mp4" type="video/mp4">
+  If you don't see demo reels here, your browser does not support embedded video.
+</video>
+	
 <script>
-const $ = id => document.getElementById(id);
-const tabBar = $('tab-bar'), edArea = $('editor-area'), statEl = $('stat-info');
-const saveEl = $('save-indicator'), toast = $('toast'), menuPop = $('menu-popup'), modalOv = $('modal-overlay');
-let tabs = [], activeId = null, saveT = null, toastT = null;
-const SK = 'np4';
-const DEFAULTS = {bg:'#f5f4f0',border:'#d0cec8',text:'#1a1917',muted:'#999590'};
-const sty = {font:"'IBM Plex Mono',monospace", size:13, ...DEFAULTS};
-const CK = ['bg','text','border','muted'];
-
-function applyStyle() {
-  const r = document.documentElement.style;
-  r.setProperty('--font', sty.font); r.setProperty('--sz', sty.size+'px');
-  CK.forEach(k => r.setProperty('--'+k, sty[k]));
-  document.querySelector('meta[name="theme-color"]').content = sty.bg;
-  document.querySelector('meta[name="background-color"]').content = sty.bg;
-}
-
-function persist() {
-  const a = tabs.find(t => t.id === activeId);
-  if (a) a.content = getEd(a.id)?.value ?? a.content;
-  try { localStorage.setItem(SK, JSON.stringify({tabs, activeId, sty})); } catch(e) {}
-  saveEl.textContent = 'saved';
-  setTimeout(() => { saveEl.textContent = ''; }, 1400);
-}
-function schedSave() { clearTimeout(saveT); saveEl.textContent = '…'; saveT = setTimeout(persist, 700); }
-
-function loadState() {
-  try {
-    const s = JSON.parse(localStorage.getItem(SK));
-    if (!s?.tabs?.length) return false;
-    tabs = s.tabs; activeId = s.activeId;
-    if (s.sty) { Object.assign(sty, s.sty); applyStyle(); }
-    tabs.forEach(renderTab); tabs.forEach(renderEditor);
-    activateTab(activeId || tabs[0].id);
-    return true;
-  } catch(e) { return false; }
-}
-
-let uid = Date.now();
-function createTab(name, content='') {
-  const id = 't'+uid++;
-  const td = {id, name: name ?? 'note '+(tabs.length+1), content};
-  tabs.push(td); renderTab(td); renderEditor(td); activateTab(id); schedSave();
-}
-
-function renderTab(t) {
-  const el = document.createElement('div');
-  el.className = 'tab'; el.dataset.id = t.id;
-  const inp = document.createElement('input');
-  inp.className = 'tab-name-input'; inp.value = t.name; inp.maxLength = 40; inp.readOnly = true;
-  inp.addEventListener('dblclick', () => { inp.readOnly = false; inp.select(); });
-  inp.addEventListener('blur', () => { inp.readOnly = true; t.name = inp.value.trim()||'untitled'; inp.value = t.name; schedSave(); });
-  inp.addEventListener('keydown', e => { if (e.key==='Enter') inp.blur(); e.stopPropagation(); });
-  inp.addEventListener('mousedown', e => { if (inp.readOnly) e.preventDefault(); });
-  const x = document.createElement('button');
-  x.className = 'tab-close'; x.textContent = '×';
-  x.addEventListener('click', e => { e.stopPropagation(); closeTab(t.id); });
-  el.appendChild(inp); el.appendChild(x);
-  el.addEventListener('mousedown', e => { if (e.target===x || !inp.readOnly) return; activateTab(t.id); });
-  tabBar.insertBefore(el, $('add-tab'));
-  setTimeout(() => el.scrollIntoView({inline:'nearest',block:'nearest'}), 0);
-}
-
-function renderEditor(t) {
-  const ed = document.createElement('textarea');
-  ed.className = 'editor'; ed.dataset.id = t.id; ed.value = t.content; ed.spellcheck = true;
-  ed.addEventListener('input', () => { t.content = ed.value; schedSave(); updateStat(ed.value); });
-  ed.addEventListener('keydown', e => {
-    if (e.key!=='Tab') return; e.preventDefault();
-    const s = ed.selectionStart;
-    ed.value = ed.value.slice(0,s)+'\t'+ed.value.slice(ed.selectionEnd);
-    ed.selectionStart = ed.selectionEnd = s+1;
+  var video1 = document.getElementById('player1');
+  video1.onended = function() {
+      video1.load(); // Resets the video
+  };
+  const player1 = new Plyr('#player1', {
+      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
   });
-  edArea.insertBefore(ed, $('statusbar'));
-}
+	  var video2 = document.getElementById('player2');
+  video2.onended = function() {
+      video2.load(); // Resets the video
+  };
+  const player2 = new Plyr('#player2', {
+      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
+  });
 
-function activateTab(id) {
-  const prev = tabs.find(t => t.id===activeId);
-  if (prev) { const e = getEd(prev.id); if (e) prev.content = e.value; }
-  activeId = id;
-  document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.dataset.id===id));
-  document.querySelectorAll('.editor').forEach(el => el.classList.toggle('active', el.dataset.id===id));
-  const ed = getEd(id);
-  if (ed) { updateStat(ed.value); setTimeout(() => ed.focus(), 0); }
-}
-
-function closeTab(id) {
-  if (tabs.length===1) { const ed=getEd(id); if(ed) ed.value=''; tabs[0].content=''; updateStat(''); schedSave(); return; }
-  const idx = tabs.findIndex(t => t.id===id);
-  tabs.splice(idx,1);
-  document.querySelector(`.tab[data-id="${id}"]`)?.remove();
-  document.querySelector(`.editor[data-id="${id}"]`)?.remove();
-  activateTab(tabs[Math.min(idx,tabs.length-1)].id); schedSave();
-}
-
-function getEd(id) { return document.querySelector(`.editor[data-id="${id}"]`); }
-function updateStat(v) {
-  const w = v.trim()==='' ? 0 : v.trim().split(/\s+/).length;
-  statEl.textContent = `${v.length.toLocaleString()} chars · ${w.toLocaleString()} words · ${v.split('\n').length.toLocaleString()} lines`;
-}
-function showToast(msg) { toast.textContent=msg; toast.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>toast.classList.remove('show'),1300); }
-
-$('btn-copy').addEventListener('click', () => {
-  const ed = getEd(activeId); if (!ed) return;
-  navigator.clipboard.writeText(ed.value).then(()=>showToast('copied')).catch(()=>{ed.select();document.execCommand('copy');showToast('copied');});
-});
-
-$('btn-clear').addEventListener('dblclick', () => {
-  const ed = getEd(activeId); if (!ed||ed.value==='') return;
-  ed.value=''; const t=tabs.find(t=>t.id===activeId); if(t) t.content='';
-  updateStat(''); schedSave();
-});
-
-$('add-tab').addEventListener('click', () => createTab());
-$('btn-menu').addEventListener('click', e => { e.stopPropagation(); menuPop.classList.toggle('open'); });
-document.addEventListener('click', () => menuPop.classList.remove('open'));
-menuPop.addEventListener('click', e => e.stopPropagation());
-$('menu-style').addEventListener('click', () => { menuPop.classList.remove('open'); openModal(); });
-
-function syncColorInputs() { CK.forEach(k => { $('cp-'+k).value=sty[k]; $('ct-'+k).value=sty[k]; }); }
-function openModal() {
-  document.querySelectorAll('.font-btn').forEach(b => b.classList.toggle('selected', b.dataset.font===sty.font));
-  $('sz-slider').value=sty.size; $('sz-label').textContent=sty.size+'px';
-  syncColorInputs(); modalOv.classList.add('open');
-}
-function closeModal() { modalOv.classList.remove('open'); schedSave(); }
-$('modal-close-btn').addEventListener('click', closeModal);
-modalOv.addEventListener('click', e => { if(e.target===modalOv) closeModal(); });
-
-$('font-grid').addEventListener('click', e => {
-  const b=e.target.closest('.font-btn'); if(!b) return;
-  document.querySelectorAll('.font-btn').forEach(x=>x.classList.remove('selected'));
-  b.classList.add('selected'); sty.font=b.dataset.font; applyStyle();
-});
-$('sz-slider').addEventListener('input', e => { sty.size=parseInt(e.target.value); $('sz-label').textContent=sty.size+'px'; applyStyle(); });
-CK.forEach(k => {
-  $('cp-'+k).addEventListener('input', e => { sty[k]=e.target.value; $('ct-'+k).value=e.target.value; applyStyle(); });
-  $('ct-'+k).addEventListener('input', e => { if(/^#[0-9a-fA-F]{6}$/.test(e.target.value)) { sty[k]=e.target.value; $('cp-'+k).value=e.target.value; applyStyle(); } });
-});
-$('colors-reset').addEventListener('click', () => { Object.assign(sty,DEFAULTS); syncColorInputs(); applyStyle(); });
-
-if (!loadState()) createTab('note 1');
-
-$('menu-open').addEventListener('click', async () => {
-  menuPop.classList.remove('open');
-  try {
-    const [handle] = await window.showOpenFilePicker({
-      types: [{ description: 'Text files', accept: { 'text/plain': ['.txt', '.md'] } }]
-    });
-    const file = await handle.getFile();
-    const content = await file.text();
-    createTab(file.name, content);
-  } catch(e) { if (e.name !== 'AbortError') console.error(e); }
-});
-
-$('menu-save').addEventListener('click', async () => {
-  menuPop.classList.remove('open');
-  const ed = getEd(activeId); if (!ed) return;
-  const t = tabs.find(t => t.id === activeId);
-  try {
-    const handle = await window.showSaveFilePicker({
-      suggestedName: t?.name || 'note.txt',
-      types: [{ description: 'Text files', accept: { 'text/plain': ['.txt', '.md'] } }]
-    });
-    const writable = await handle.createWritable();
-    await writable.write(ed.value);
-    await writable.close();
-    showToast('saved to disk');
-  } catch(e) { if (e.name !== 'AbortError') console.error(e); }
-});
+	 var video3 = document.getElementById('player3');
+  video3.onended = function() {
+      video3.load(); // Resets the video
+  };
+  const player3 = new Plyr('#player3', {
+      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
+  });
 </script>
+	
+</div>
+<p>MAYA</p>
+<div>
+<a href="/maya/snap.html">EASY SNAPPING SCRIPT (TUTORIAL)</a><br/>
+</div>
+    </main>
+    <footer>
+<br/>
+<div style="text-align: center;">
+<span><a href="https://linktr.ee/ohnotomsutton">LINKS</a></span>
+<br />
+<span>Tom Sutton, 2025</span>
+</div>
+
+<br/>
+<br/>
+    </footer>
+    </container>
 </body>
 </html>
