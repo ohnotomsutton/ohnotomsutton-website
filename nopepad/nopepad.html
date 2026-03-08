@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notepad</title>
+<title>nopepad</title>
+<link rel="manifest" href="manifest.json">
+<script>
+  if ('serviceWorker' in navigator)
+    navigator.serviceWorker.register('/sw.js');
+</script>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Fira+Code:wght@400;500&family=Inconsolata:wght@400;500&family=Source+Code+Pro:wght@400;500&family=Courier+Prime:wght@400;700&display=swap");
 *,
@@ -492,7 +497,7 @@ body {
     <span id="stat-info">0 chars · 0 words · 1 line</span>
     <span id="save-indicator"></span>
     <div class="bar-sep"></div>
-    <button class="bar-btn" id="btn-clear" title="Clear" style="font-size:1.2em">✘</button>
+    <button class="bar-btn" id="btn-clear" title="Doubleclick to Clear" style="font-size:1.2em">✘</button>
     <div class="bar-sep"></div>
     <button class="bar-btn" id="btn-copy" title="Copy all">⧉</button>
     <div class="bar-sep"></div>
@@ -542,10 +547,6 @@ body {
 <div id="toast"></div>
 
 <script>
-
-$('tb-close').addEventListener('click', () => window.close());
-$('tb-min').addEventListener('click', () => window.minimize?.());
-
 const $ = id => document.getElementById(id);
 const tabBar = $('tab-bar'), edArea = $('editor-area'), statEl = $('stat-info');
 const saveEl = $('save-indicator'), toast = $('toast'), menuPop = $('menu-popup'), modalOv = $('modal-overlay');
@@ -714,6 +715,9 @@ $('menu-save').addEventListener('click', async () => {
     showToast('saved to disk');
   } catch(e) { if (e.name !== 'AbortError') console.error(e); }
 });
+
+$('tb-close').addEventListener('click', () => window.close());
+$('tb-min').addEventListener('click', () => window.minimize?.());
 </script>
 </body>
 </html>
