@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f4f0">
 <title>nopepad</title>
 <link rel="manifest" href="manifest.json">
 <script>
@@ -516,6 +517,7 @@ function applyStyle() {
   const r = document.documentElement.style;
   r.setProperty('--font', sty.font); r.setProperty('--sz', sty.size+'px');
   CK.forEach(k => r.setProperty('--'+k, sty[k]));
+  document.querySelector('meta[name="theme-color"]').content = sty.bg;
 }
 
 function persist() {
