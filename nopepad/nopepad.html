@@ -10,8 +10,6 @@
 <script>
   if ('serviceWorker' in navigator)
     navigator.serviceWorker.register('/nopepad/sw.js', {scope: '/nopepad/'});
-  document.querySelector('meta[name="theme-color"]').content = sty.bg;
-  document.querySelector('meta[name="background-color"]').content = sty.bg;
 </script>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Fira+Code:wght@400;500&family=Inconsolata:wght@400;500&family=Source+Code+Pro:wght@400;500&family=Courier+Prime:wght@400;700&display=swap");
@@ -680,4 +678,5 @@ $('menu-save').addEventListener('click', async () => {
 </script>
 </body>
 </html>
+
 
