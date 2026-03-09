@@ -1,4 +1,4 @@
-const CACHE = 'nopepad-v1';
+const CACHE = 'nopepad-v3';
 const FILES = [
   '/nopepad/nopepad.html',
   '/nopepad/manifest.json',
@@ -26,4 +26,5 @@ self.addEventListener('fetch', e => {
       return res;
     }))
   );
+
 });
