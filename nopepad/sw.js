@@ -1,4 +1,4 @@
-const CACHE = 'nopepad-v3';
+const CACHE = 'nopepad-v4';
 const FILES = [
   '/nopepad/nopepad.html',
   '/nopepad/manifest.json',
