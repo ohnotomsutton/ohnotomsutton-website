@@ -181,6 +181,15 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+#note-name {
+  padding: 0 10px;
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 #save-indicator {
   font-size: 10px;
   color: var(--muted);
@@ -493,7 +502,8 @@ body {
 <div id="editor-area">
 
   <div id="statusbar">
-    <span id="stat-info">0 chars · 0 words · 1 line</span>
+	<span id="note-name"></span>
+    <span id="stat-info"> · 0 chars · 0 words · 1 line</span>
     <span id="save-indicator"></span>
     <div class="bar-sep"></div>
     <button class="bar-btn" id="btn-clear" title="Doubleclick to Clear" style="font-size:1.2em">✘</button>
@@ -557,7 +567,7 @@ body {
 </div>
 <script>
 const $ = id => document.getElementById(id);
-const tabBar = $('tab-bar'), edArea = $('editor-area'), statEl = $('stat-info');
+const tabBar = $('tab-bar'), edArea = $('editor-area'), statEl = $('stat-info'), noteName = $('note-name');
 const saveEl = $('save-indicator'), toast = $('toast'), menuPop = $('menu-popup'), modalOv = $('modal-overlay');
 let tabs = [], activeId = null, saveT = null, toastT = null;
 const SK = 'np4';
@@ -609,7 +619,15 @@ function renderTab(t) {
   const inp = document.createElement('input');
   inp.className = 'tab-name-input'; inp.value = t.name; inp.maxLength = 40; inp.readOnly = true;
   inp.addEventListener('dblclick', () => { inp.readOnly = false; inp.select(); });
-  inp.addEventListener('blur', () => { inp.readOnly = true; t.name = inp.value.trim()||'untitled'; inp.value = t.name; schedSave(); });
+  inp.addEventListener('blur', () => { 
+  
+  inp.readOnly = true; 
+  t.name = inp.value.trim()||'untitled'; 
+  inp.value = t.name; 
+  if (t.id === activeId) noteName.textContent = t.name;
+  schedSave(); 
+  
+  });
   inp.addEventListener('keydown', e => { if (e.key==='Enter') inp.blur(); e.stopPropagation(); });
   inp.addEventListener('mousedown', e => { if (inp.readOnly) e.preventDefault(); });
 
@@ -672,7 +690,9 @@ function activateTab(id) {
   document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.dataset.id===id));
   document.querySelectorAll('.editor').forEach(el => el.classList.toggle('active', el.dataset.id===id));
   const ed = getEd(id);
+  const t = tabs.find(t => t.id === id);
   if (ed) { updateStat(ed.value); setTimeout(() => ed.focus(), 0); }
+  if (t) noteName.textContent = t.name;
 }
 
 function closeTab(id) {
