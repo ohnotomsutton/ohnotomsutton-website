@@ -1,7 +1,7 @@
 {
   "name": "videoMarkup",
   "short_name": "videoMarkup",
-  "start_url": "/videoMarkup.html",
+  "start_url": "/videomarkup.html",
   "display": "standalone",
   "background_color": "#f5f4f0",
   "theme_color": "#f5f4f0",
