@@ -6,7 +6,7 @@
 <link rel="manifest" href="manifest.json">
 <script>
   if ('serviceWorker' in navigator)
-    navigator.serviceWorker.register('/videomarkup/sw.js', {scope: '/videomarkup/'});
+    navigator.serviceWorker.register('/videomarkup/sw.js', {scope: '/videomarkup/videomarkup.html'});
 </script>
 <script>
 // embedded muxer from https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/build/mp4-muxer.js to prevent offline call errors
