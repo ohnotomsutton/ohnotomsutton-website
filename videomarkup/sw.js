@@ -1,6 +1,6 @@
 const CACHE = 'videoMarkup-v1';
 const FILES = [
-  '/nopepad/videoMarkup.html',
+  '/nopepad/videomarkup.html',
   '/nopepad/manifest.json',
   '/nopepad/icon-192.png',
   '/nopepad/icon-512.png'
