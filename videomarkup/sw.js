@@ -1,9 +1,9 @@
 const CACHE = 'videoMarkup-v1';
 const FILES = [
-  '/nopepad/videomarkup.html',
-  '/nopepad/manifest.json',
-  '/nopepad/icon-192.png',
-  '/nopepad/icon-512.png'
+  '/videomarkup/videomarkup.html',
+  '/videomarkup/manifest.json',
+  '/videomarkup/icon-192.png',
+  '/videomarkup/icon-512.png'
 ];
 
 self.addEventListener('install', e => {
