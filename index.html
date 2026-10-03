@@ -171,6 +171,20 @@ video {
     .modal img {
       object-fit: contain;
     }
+	/* Crop focused on the top of the image */
+.gif-tile.focus-top {
+  object-position: top;
+}
+
+/* Crop focused on the center (default behavior) */
+.gif-tile.focus-center {
+  object-position: center;
+}
+
+/* Crop focused on the bottom */
+.gif-tile.focus-bottom {
+  object-position: bottom;
+}
 		
     </style>
 </head>
@@ -183,9 +197,9 @@ video {
         <blockquote>i'm an animation lead at guru studio on the paw patrol tv series. i also make video games, board games, art, and software - i just wanna make fun things that make people happy. contact me at ohnotomsutton ȧt gmail dȯt com.</blockquote>
         <br />
 <div class="gif-grid">
-	<img src="img/garabox_wm.png" class="gif-tile">
-	<img src="img/patchybox_wm.png" class="gif-tile">
-	<img src="img/arrrfbox_wm.png" class="gif-tile">
+	<img src="img/garabox_wm.png" class="gif-tile focus-top">
+	<img src="img/patchybox_wm.png" class="gif-tile focus-top">
+	<img src="img/arrrfbox_wm.png" class="gif-tile focus-top">
 	<img src="img/arrrfcards_wm.png" class="gif-tile">
     <img src="img/sonic_comp.gif" class="gif-tile">
 </div>	
