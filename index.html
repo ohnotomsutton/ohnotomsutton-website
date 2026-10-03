@@ -148,7 +148,53 @@ video {
     <main>
         <blockquote>i'm an animation lead at guru studio on the paw patrol tv series. i also make video games, board games, art, and software - i just wanna make fun things that make people happy. contact me at ohnotomsutton ȧt gmail dȯt com.</blockquote>
         <br />
-        <p>CV</p>
+        
+<p>ANIMATION</p>
+<div>
+
+<video id="player1" controls poster="/img/thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+  <source src="/files/spiderversereel.mp4" type="video/mp4">
+  If you don't see demo reels here, your browser does not support embedded video.
+</video>
+<br />
+<video id="player2" controls poster="/img/tracker_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+  <source src="/files/trackerreel.mp4" type="video/mp4">
+  If you don't see demo reels here, your browser does not support embedded video.
+</video>
+<br />
+<video id="player3" controls poster="/img/mpups_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
+  <source src="/files/mpupsreel.mp4" type="video/mp4">
+  If you don't see demo reels here, your browser does not support embedded video.
+</video>
+	
+<script>
+  var video1 = document.getElementById('player1');
+  video1.onended = function() {
+      video1.load(); // Resets the video
+  };
+  const player1 = new Plyr('#player1', {
+      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
+  });
+	  var video2 = document.getElementById('player2');
+  video2.onended = function() {
+      video2.load(); // Resets the video
+  };
+  const player2 = new Plyr('#player2', {
+      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
+  });
+
+	 var video3 = document.getElementById('player3');
+  video3.onended = function() {
+      video3.load(); // Resets the video
+  };
+  const player3 = new Plyr('#player3', {
+      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
+  });
+</script>
+	
+</div>
+
+<p>CV</p>
         <div id="table01" class="table-wrapper">
           <div class="table-inner">
             <table>
@@ -311,59 +357,11 @@ video {
 <span style="font-size: 10px;">* Game Boy compatible</span>
   </div>
 </div>
-<p>ANIMATION</p>
-<div>
-
-<video id="player1" controls poster="/img/thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
-  <source src="/files/spiderversereel.mp4" type="video/mp4">
-  If you don't see demo reels here, your browser does not support embedded video.
-</video>
-<br />
-<video id="player2" controls poster="/img/tracker_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
-  <source src="/files/trackerreel.mp4" type="video/mp4">
-  If you don't see demo reels here, your browser does not support embedded video.
-</video>
-<br />
-<video id="player3" controls poster="/img/mpups_thumbnail.png" controlsList="nodownload" oncontextmenu="return false;">
-  <source src="/files/mpupsreel.mp4" type="video/mp4">
-  If you don't see demo reels here, your browser does not support embedded video.
-</video>
-	
-<script>
-  var video1 = document.getElementById('player1');
-  video1.onended = function() {
-      video1.load(); // Resets the video
-  };
-  const player1 = new Plyr('#player1', {
-      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
-  });
-	  var video2 = document.getElementById('player2');
-  video2.onended = function() {
-      video2.load(); // Resets the video
-  };
-  const player2 = new Plyr('#player2', {
-      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
-  });
-
-	 var video3 = document.getElementById('player3');
-  video3.onended = function() {
-      video3.load(); // Resets the video
-  };
-  const player3 = new Plyr('#player3', {
-      controls: ['play', 'progress', 'mute','volume', 'fullscreen']
-  });
-</script>
-	
-</div>
-<p>MAYA</p>
-<div>
-<a href="/maya/snap.html">EASY SNAPPING SCRIPT (TUTORIAL)</a><br/>
-</div>
-    </main>
+		
+   </main>
     <footer>
 <br/>
 <div style="text-align: center;">
-<span><a href="https://linktr.ee/ohnotomsutton">LINKS</a></span>
 <br />
 <span>Tom Sutton, 2025</span>
 </div>
