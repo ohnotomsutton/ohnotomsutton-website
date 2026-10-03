@@ -171,21 +171,21 @@ video {
     .modal img {
       object-fit: contain;
     }
-	/* Crop focused on the top of the image */
 .gif-tile.focus-top {
   object-position: top;
 }
 
-/* Crop focused on the center (default behavior) */
 .gif-tile.focus-center {
   object-position: center;
 }
 
-/* Crop focused on the bottom */
 .gif-tile.focus-bottom {
   object-position: bottom;
 }
 		
+.gif-tile.no-scale {
+  object-fit: none;
+}
     </style>
 </head>
 <body>
@@ -199,7 +199,7 @@ video {
 <div class="gif-grid">
 	<img src="img/garabox_wm.png" class="gif-tile focus-top">
 	<img src="img/patchybox_wm.png" class="gif-tile focus-top">
-	<img src="img/arrrfbox_wm.png" class="gif-tile focus-top">
+	<img src="img/arrrfbox_wm.png" class="gif-tile no-scale">
 	<img src="img/arrrfcards_wm.png" class="gif-tile">
     <img src="img/sonic_comp.gif" class="gif-tile">
 </div>	
