@@ -166,9 +166,19 @@ video {
       cursor: pointer;
     }
 
-    .modal img {
-      object-fit: contain;
-    }
+.modal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .modal img {
+    max-width: 80vw;
+    max-height: 60vh;
+  }
+}
+		
 .gif-tile.focus-top {
   object-position: top;
 }
